@@ -10,7 +10,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
       traefik.port: "8080"
-      traefik.frontend.rule: "Host:127.0.0.1,localhost;PathPrefix:/dashboard,/api,/health"
+      traefik.frontend.rule: "PathPrefix:/dashboard,/api,/health"
       traefik.backend: "traefik"
     command: --docker --docker.watch --web
   app:
@@ -21,7 +21,7 @@ services:
       - mongo
     labels:
       traefik.port: "8080"
-      traefik.frontend.rule: "Host:127.0.0.1,localhost"
+      traefik.frontend.rule: "PathPrefix:/"
       traefik.backend: "app"
   mongo:
     image: mongo
