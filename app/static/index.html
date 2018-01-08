@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Slow Who am I ?</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+  <style type="text/css">
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  #graph {
+    width: 100%;
+    height: 80%;
+  }
+</style>
+</head>
+<body>
+  <canvas id="graph"></canvas>
+  <script>
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+
+    var nullprepend=[];
+    var data = {labels: [], datasets:[]}
+    var ctx = document.getElementById("graph").getContext('2d');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: data,
+      options: {
+        scales: {
+          yAxes: [
+          {
+            ticks: {
+              beginAtZero:true
+            }
+          }
+          ]
+        }
+      }
+    });
+    setInterval(function(){
+      var req = new XMLHttpRequest();
+      req.open('GET', '/stats', true); 
+      req.timeout = 1000;
+      req.onload = function(e){
+        if (req.status !== 200) {
+          console.error("Status de la réponse: %d (%s)", req.status, req.statusText);
+          return;
+        }
+        var stats = JSON.parse(req.responseText);
+  
+        nullprepend.push({x:0,y:0});
+  
+        var label=0;
+  
+        for (var i =0; i<stats.all.length;i++){
+          var hostname = stats.all[i]['_id'];
+          var dataset = undefined;
+          for (var j = 0; j < data.datasets.length; j++){
+            if (data.datasets[j].label == hostname){
+              dataset = data.datasets[j];
+            }
+          }
+          if (dataset === undefined){
+            console.log("New hostname "+hostname)
+            dataset = {label: hostname, data: [], fill: false, borderColor: getRandomColor()};
+            dataset.data = dataset.data.concat(nullprepend);
+            data.datasets.push(dataset);
+          }
+  
+          label=Math.max(label,Date.parse(stats.all[i].timestamp));
+          if (dataset.last_date != stats.all[i].timestamp){
+            console.log("Update hostname "+hostname)
+            dataset.data.push({x:Date.parse(stats.all[i].timestamp), y: stats.all[i].currentTimeRequest});
+            dataset.last_date = stats.all[i].timestamp;
+          }
+        }
+  
+        label=(new Date(label)).toLocaleString();
+        data.labels.push(label);
+        myChart.update();
+        
+      }
+      req.onerror = function(e){
+        console.error(req.statusText)
+      }
+
+      req.send(null);
+    },500)
+  </script>
+</body>
+</html>

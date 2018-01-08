@@ -1,0 +1,24 @@
+{
+  "name": "slow-whoami",
+  "version": "1.0.0",
+  "description": "Simple whoami webapp but slow",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tcoupin/slow-whoami.git"
+  },
+  "author": "Thibault Coupin <thibault.coupin@gmail.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/tcoupin/slow-whoami/issues"
+  },
+  "homepage": "https://github.com/tcoupin/slow-whoami#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mongodb": "^3.0.1"
+  }
+}
