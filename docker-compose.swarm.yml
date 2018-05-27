@@ -1,0 +1,32 @@
+version: "3.0"
+
+services:
+  lb:
+    image: traefik
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        traefik.port: "8080"
+        traefik.frontend.rule: "PathPrefix:/dashboard,/api,/health"
+        traefik.backend: "traefik"
+    command: --docker --docker.watch --docker.swarmmode --api
+  app:
+    image: tcoupin/slow-whoami
+    environment:
+      - MONGO_URL="mongodb://slowwhoami_app:27017"
+    deploy:
+      labels:
+        traefik.port: "8080"
+        traefik.frontend.rule: "PathPrefix:/"
+        traefik.backend: "app"
+  mongo:
+    image: mongo
+    deploy:
+      labels:
+        traefik.enable: "false"
