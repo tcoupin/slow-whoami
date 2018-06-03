@@ -19,7 +19,7 @@ services:
   app:
     image: tcoupin/slow-whoami
     environment:
-      - MONGO_URL="mongodb://slowwhoami_app:27017"
+      - MONGO_URL=mongodb://mongo:27017
     deploy:
       labels:
         traefik.port: "8080"
