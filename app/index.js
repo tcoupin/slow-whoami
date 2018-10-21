@@ -54,7 +54,7 @@ app.get('/stats', function(req, res) {
 			{
 				$match: {
 					timestamp: {
-        				$gt: new Date(new Date() - 1000 * 10)
+        				$gt: new Date(new Date() - 1000 * 1)
         			}
 				}
     		},
