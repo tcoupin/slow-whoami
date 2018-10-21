@@ -1,11 +1,26 @@
 version: "3.0"
 
 services:
+  lb:
+    image: traefik
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      traefik.port: "8080"
+      traefik.frontend.rule: "PathPrefix:/dashboard,/api,/health"
+      traefik.backend: "traefik"
+    command: --docker --docker.watch --web
   app:
     image: tcoupin/slow-whoami
     links:
       - mongo
-    ports:
-      - "80:8080"
+    labels:
+      traefik.port: "8080"
+      traefik.frontend.rule: "PathPrefix:/"
+      traefik.backend: "app"
   mongo:
     image: mongo
+    labels:
+      traefik.enable: "false"
