@@ -2,7 +2,7 @@ version: "3.0"
 
 services:
   lb:
-    image: traefik
+    image: traefik:maroilles
     ports:
       - "80:80"
     volumes:
